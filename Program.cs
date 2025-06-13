@@ -4,6 +4,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        Console.WriteLine("Welcome, Alexander!");
+        MenuManager menuManager = new MenuManager();
+        
+        menuManager.MainMenu();
+
     }
 }
