@@ -2,12 +2,13 @@ namespace CustomerManagement;
 
 public class MenuManager
 {
-    public void MainMenu()
-    {
         List<Customer> customers = new List<Customer>();
         List<Product> products = new List<Product>();
         List<Order> orders = new List<Order>();
-
+        InputValidator inputValidator = new InputValidator();
+        DisplayHelper displayHelper = new DisplayHelper();
+    public void MainMenu()
+    {
         while (true)
         {
             Console.WriteLine("=== Customer Management System ===");
@@ -40,7 +41,7 @@ public class MenuManager
         }
     }
 
-    static void ManageCustomers()
+    void ManageCustomers()
     {
         while (true)
         {
@@ -58,10 +59,10 @@ public class MenuManager
             switch (choice)
             {
                 case "1":
-                    // Add
+                    AddCustomer();
                     break;
                 case "2":
-                    // View All
+                    ViewAllCustomer();
                     break;
                 case "3":
                 // Find by ID
@@ -81,7 +82,59 @@ public class MenuManager
         }
     }
 
-    static void ManageProducts()
+    void AddCustomer()
+    {
+        Console.Write("Enter the name: ");
+        string name = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(name))
+        {
+            Console.WriteLine("Error: name of customer is required");
+            return;
+        }
+
+        Console.Write("Enter the email: ");
+        string email = Console.ReadLine()!;
+
+        if (!inputValidator.IsValidEmail(email))
+        {
+            Console.WriteLine("Error: email of customer is not valid");
+            return;
+        }
+
+        Console.WriteLine("Select Customer Type: ");
+        Console.WriteLine("1. Regular ");
+        Console.WriteLine("2. Premiun");
+        Console.Write("Choose an option: ");
+        if (!int.TryParse(Console.ReadLine(), out int userType))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+        }
+
+        CustomerType customerType;
+        switch (userType)
+        {
+            case 1:
+                customerType = CustomerType.Regular;
+                break;
+            case 2:
+                customerType = CustomerType.Regular;
+                break;
+            default:
+                Console.WriteLine("Invalid option. Try again");
+                return;
+        }
+
+        var newCustomer = new Customer(name, email, customerType);
+        customers.Add(newCustomer);
+    }
+
+    void ViewAllCustomer()
+    {
+        displayHelper.PrintCustomer(customers);
+    }
+
+    void ManageProducts()
     {
         while (true)
         {
@@ -121,8 +174,8 @@ public class MenuManager
             }
         }
     }
-    
-    static void ManageOrders()
+
+    void ManageOrders()
     {
         while (true)
         {
@@ -146,7 +199,7 @@ public class MenuManager
                     // View All
                     break;
                 case "3":
-                    // Find by ID
+                // Find by ID
                 case "4":
                     // Update
                     break;
@@ -162,4 +215,6 @@ public class MenuManager
             }
         }
     }
+    
+
 }
