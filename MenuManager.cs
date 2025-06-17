@@ -2,11 +2,11 @@ namespace CustomerManagement;
 
 public class MenuManager
 {
-        List<Customer> customers = new List<Customer>();
-        List<Product> products = new List<Product>();
-        List<Order> orders = new List<Order>();
-        InputValidator inputValidator = new InputValidator();
-        DisplayHelper displayHelper = new DisplayHelper();
+    List<Customer> customers = new List<Customer>();
+    List<Product> products = new List<Product>();
+    List<Order> orders = new List<Order>();
+    InputValidator inputValidator = new InputValidator();
+    DisplayHelper displayHelper = new DisplayHelper();
     public void MainMenu()
     {
         while (true)
@@ -128,6 +128,8 @@ public class MenuManager
 
         var newCustomer = new Customer(name, email, customerType);
         customers.Add(newCustomer);
+
+        Console.WriteLine("Customer created successfully");
     }
 
     void ViewAllCustomer()
@@ -141,8 +143,9 @@ public class MenuManager
         if (!int.TryParse(Console.ReadLine(), out int userId))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
         }
-        var customer = inputValidator.CustomerExist(customers, userId);
+        var customer = inputValidator.GetCustomerById(customers, userId);
         if (customer == null)
         {
             Console.WriteLine("Customer not found");
@@ -157,8 +160,9 @@ public class MenuManager
         if (!int.TryParse(Console.ReadLine(), out int userId))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
         }
-        var customer = inputValidator.CustomerExist(customers, userId);
+        var customer = inputValidator.GetCustomerById(customers, userId);
         if (customer == null)
         {
             Console.WriteLine("Customer not found");
@@ -219,8 +223,9 @@ public class MenuManager
         if (!int.TryParse(Console.ReadLine(), out int userId))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
         }
-        var customer = inputValidator.CustomerExist(customers, userId);
+        var customer = inputValidator.GetCustomerById(customers, userId);
         if (customer == null)
         {
             Console.WriteLine("Customer not found");
@@ -254,7 +259,7 @@ public class MenuManager
                     ViewAllProduct();
                     break;
                 case "3":
-                    FindProductByID();
+                    FindProductByIdID();
                     break;
                 case "4":
                     UpdateProduct();
@@ -290,13 +295,15 @@ public class MenuManager
         }
 
         Console.Write("Enter product stock quantity: ");
-         if (!int.TryParse(Console.ReadLine(), out int stockQuantity))
+        if (!int.TryParse(Console.ReadLine(), out int stockQuantity))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
         }
-        
+
         var newProduct = new Product(name, price, stockQuantity);
         products.Add(newProduct);
+
+        Console.WriteLine("Product created successfully");
     }
 
     void ViewAllProduct()
@@ -304,14 +311,15 @@ public class MenuManager
         displayHelper.PrintProduct(products);
     }
 
-    void FindProductByID()
+    void FindProductByIdID()
     {
         Console.Write("Enter Product ID: ");
         if (!int.TryParse(Console.ReadLine(), out int userId))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
         }
-        var product = inputValidator.ProductExist(products, userId);
+        var product = inputValidator.GetProductById(products, userId);
         if (product == null)
         {
             Console.WriteLine("Product not found");
@@ -326,8 +334,9 @@ public class MenuManager
         if (!int.TryParse(Console.ReadLine(), out int userId))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
         }
-        var product = inputValidator.ProductExist(products, userId);
+        var product = inputValidator.GetProductById(products, userId);
         if (product == null)
         {
             Console.WriteLine("Product not found");
@@ -360,7 +369,7 @@ public class MenuManager
         product.StockQuantity = newStockQuantity;
 
         Console.WriteLine("Customer successfully updated");
-        
+
     }
 
     void DeleteProduct()
@@ -369,8 +378,9 @@ public class MenuManager
         if (!int.TryParse(Console.ReadLine(), out int userId))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
         }
-        var product = inputValidator.ProductExist(products, userId);
+        var product = inputValidator.GetProductById(products, userId);
         if (product == null)
         {
             Console.WriteLine("Product not found");
@@ -388,7 +398,7 @@ public class MenuManager
         while (true)
         {
             Console.WriteLine("=== Order Management ===");
-            Console.WriteLine("1. Add Order");
+            Console.WriteLine("1. Create Order");
             Console.WriteLine("2. View All Orders");
             Console.WriteLine("3. Find Order by ID");
             Console.WriteLine("4. Update Order");
@@ -401,18 +411,19 @@ public class MenuManager
             switch (choice)
             {
                 case "1":
-                    // Add
+                    CreateOrder();
                     break;
                 case "2":
-                    // View All
+                    ViewAllOrders();
                     break;
                 case "3":
-                // Find by ID
+                    FindOrderById();
+                    break;
                 case "4":
-                    // Update
+                    UpdateOrder();
                     break;
                 case "5":
-                    // Delete
+                    DeleteOrder();
                     break;
                 case "6":
                     return;
@@ -423,6 +434,162 @@ public class MenuManager
             }
         }
     }
-    
+
+    void CreateOrder()
+    {
+        // getting customer
+        Console.Write("Enter Customer ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int customerId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+
+        }
+        var customer = inputValidator.GetCustomerById(customers, customerId);
+        if (customer == null)
+        {
+            Console.WriteLine("Customer not found");
+            return;
+        }
+
+        // getting product
+        Console.Write("Enter Product ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int productId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+        }
+        var product = inputValidator.GetProductById(products, productId);
+        if (product == null)
+        {
+            Console.WriteLine("Product not found");
+            return;
+        }
+
+        if (product.StockQuantity == 0)
+        {
+            Console.WriteLine("Product out of stock");
+            return;
+        }
+
+        Console.Write("Enter quantity of the order: ");
+        if (!int.TryParse(Console.ReadLine(), out int quantity))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+        }
+
+        var newOrder = new Order(customer, product, quantity);
+        orders.Add(newOrder);
+
+        Console.WriteLine("Order created successfully");
+    }
+
+    void ViewAllOrders()
+    {
+        displayHelper.PrintOrder(orders);
+    }
+
+    void FindOrderById()
+    {
+        Console.Write("Enter Order ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int orderId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+        }
+        var order = inputValidator.GetOrderById(orders, orderId);
+        if (order == null)
+        {
+            Console.WriteLine("Order not found");
+            return;
+        }
+        Console.WriteLine($"ID: {order.OrderId} | Customer Name: {order.Customer.Name} | Product Name and Price [{order.Product.Name} - {order.Product.Price}] | Quantity: {order.Quantity} | Date: {order.OrderDate} | Total: {order.TotalAmount}");
+
+    }
+
+    void UpdateOrder()
+    {
+        Console.Write("Enter Order ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int orderId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+        }
+        var order = inputValidator.GetOrderById(orders, orderId);
+        if (order == null)
+        {
+            Console.WriteLine("Order not found");
+            return;
+        }
+
+        // getting customer
+        Console.Write("Enter Customer ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int customerId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+
+        }
+        var newCustomer = inputValidator.GetCustomerById(customers, customerId);
+        if (newCustomer == null)
+        {
+            Console.WriteLine("Customer not found");
+            return;
+        }
+
+        // getting product
+        Console.Write("Enter Product ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int newProductId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+        }
+        var newProduct = inputValidator.GetProductById(products, newProductId);
+        if (newProduct == null)
+        {
+            Console.WriteLine("Product not found");
+            return;
+        }
+
+        if (newProduct.StockQuantity == 0)
+        {
+            Console.WriteLine("Product out of stock");
+            return;
+        }
+
+        Console.Write("Enter quantity of the order: ");
+        if (!int.TryParse(Console.ReadLine(), out int newQuantity))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+        }
+
+        order.Customer = newCustomer;
+        order.Product = newProduct;
+        order.Quantity = newQuantity;
+        order.OrderDate = DateTime.Now;
+        order.TotalAmount = newQuantity * newProduct.Price;
+
+        Console.WriteLine("Order successfully updated");
+    }
+
+    void DeleteOrder()
+    {
+        Console.Write("Enter Order ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int orderId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+        }
+        var order = inputValidator.GetOrderById(orders, orderId);
+        if (order == null)
+        {
+            Console.WriteLine("Order not found");
+            return;
+        }
+        orders.Remove(order);
+        Console.WriteLine("Order successfully deleted");
+    }
 
 }

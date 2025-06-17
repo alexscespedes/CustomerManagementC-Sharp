@@ -10,13 +10,18 @@ public class InputValidator
         return Regex.IsMatch(email, pattern);
     }
 
-    public Customer CustomerExist(List<Customer> customers, int id)
+    public Customer GetCustomerById(List<Customer> customers, int id)
     {
         return customers.FirstOrDefault(s => s.CustomerId == id)!;
     }
 
-    public Product ProductExist(List<Product> products, int id)
+    public Product GetProductById(List<Product> products, int id)
     {
-        return products.FirstOrDefault(p => p.ProductId == id)!;  
+        return products.FirstOrDefault(p => p.ProductId == id)!;
+    }
+
+    public Order GetOrderById(List<Order> orders, int id)
+    {
+        return orders.FirstOrDefault(p => p.OrderId == id)!;
     }
 }

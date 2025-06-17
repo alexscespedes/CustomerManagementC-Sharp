@@ -9,7 +9,7 @@ public class Order
     public int Quantity { get; set; }
     public DateTime OrderDate { get; set; }
     public decimal TotalAmount { get; set; }
-    public Order(Customer customer, Product product, int quantity, List<decimal> totalAmount)
+    public Order(Customer customer, Product product, int quantity)
     {
         OrderId = Interlocked.Increment(ref nextId);
         Customer = customer;
