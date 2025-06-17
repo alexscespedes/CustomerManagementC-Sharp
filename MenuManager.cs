@@ -143,6 +143,11 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
         }
         var customer = inputValidator.CustomerExist(customers, userId);
+        if (customer == null)
+        {
+            Console.WriteLine("Customer not found");
+            return;
+        }
         Console.WriteLine($"ID: {customer.CustomerId} | Customer: {customer.Name} | Email {customer.Email} | Type: {customer.CustomerType}");
     }
 
@@ -154,6 +159,11 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
         }
         var customer = inputValidator.CustomerExist(customers, userId);
+        if (customer == null)
+        {
+            Console.WriteLine("Customer not found");
+            return;
+        }
 
         Console.Write("Enter the name to update: ");
         string newName = Console.ReadLine()!;
@@ -198,7 +208,9 @@ public class MenuManager
 
         customer.Name = newName;
         customer.Email = newEmail;
-        customer.CustomerType = newCustomerType;        
+        customer.CustomerType = newCustomerType;
+
+        Console.WriteLine("Customer successfully updated");
     }
 
     void DeleteCustomer()
@@ -209,7 +221,13 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
         }
         var customer = inputValidator.CustomerExist(customers, userId);
+        if (customer == null)
+        {
+            Console.WriteLine("Customer not found");
+            return;
+        }
         customers.Remove(customer);
+        Console.WriteLine("Customer successfully deleted");
     }
 
     void ManageProducts()
@@ -236,12 +254,13 @@ public class MenuManager
                     ViewAllProduct();
                     break;
                 case "3":
-                // Find by ID
+                    FindProductByID();
+                    break;
                 case "4":
-                    // Update
+                    UpdateProduct();
                     break;
                 case "5":
-                    // Delete
+                    DeleteProduct();
                     break;
                 case "6":
                     return;
@@ -276,7 +295,6 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
         }
         
-
         var newProduct = new Product(name, price, stockQuantity);
         products.Add(newProduct);
     }
@@ -288,62 +306,79 @@ public class MenuManager
 
     void FindProductByID()
     {
-        Console.Write("Enter Customer ID: ");
+        Console.Write("Enter Product ID: ");
         if (!int.TryParse(Console.ReadLine(), out int userId))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
         }
-        var customer = inputValidator.CustomerExist(customers, userId);
-        Console.WriteLine($"ID: {customer.CustomerId} | Customer: {customer.Name} | Email {customer.Email} | Type: {customer.CustomerType}");
+        var product = inputValidator.ProductExist(products, userId);
+        if (product == null)
+        {
+            Console.WriteLine("Product not found");
+            return;
+        }
+        Console.WriteLine($"ID: {product.ProductId} | Product: {product.Name} | Price {product.Price} | In Stock: {product.StockQuantity}");
     }
 
     void UpdateProduct()
     {
-        Console.Write("Enter Customer ID: ");
+        Console.Write("Enter Product ID: ");
         if (!int.TryParse(Console.ReadLine(), out int userId))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
         }
-        var customer = inputValidator.CustomerExist(customers, userId);
+        var product = inputValidator.ProductExist(products, userId);
+        if (product == null)
+        {
+            Console.WriteLine("Product not found");
+            return;
+        }
 
-        Console.Write("Enter the name to update: ");
+        Console.Write("Enter the product name to update: ");
         string newName = Console.ReadLine()!;
 
         if (string.IsNullOrEmpty(newName))
         {
-            Console.WriteLine("Error: name of customer is required");
+            Console.WriteLine("Error: name of product is required");
             return;
         }
 
-        Console.Write("Enter the email to update: ");
-        string newEmail = Console.ReadLine()!;
-
-        if (!inputValidator.IsValidEmail(newEmail))
+        Console.Write("Enter the price to update: ");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal newPrice))
         {
-            Console.WriteLine("Error: email of customer is not valid");
-            return;
+            Console.WriteLine("Invalid input! Please enter a valid integer");
         }
 
-        Console.WriteLine("Select customer type to update: ");
-        Console.WriteLine("1. Regular ");
-        Console.WriteLine("2. Premiun");
-        Console.Write("Choose an option: ");
-        
+        Console.Write("Enter product stock quantity to update: ");
+        if (!int.TryParse(Console.ReadLine(), out int newStockQuantity))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+        }
 
-        // customer.Name = newName;
-        // customer.Email = newEmail;
-        // customer.CustomerType = newCustomerType;        
+        product.Name = newName;
+        product.Price = newPrice;
+        product.StockQuantity = newStockQuantity;
+
+        Console.WriteLine("Customer successfully updated");
+        
     }
 
     void DeleteProduct()
     {
-        Console.Write("Enter Customer ID: ");
+        Console.Write("Enter Product ID: ");
         if (!int.TryParse(Console.ReadLine(), out int userId))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
         }
-        var customer = inputValidator.CustomerExist(customers, userId);
-        customers.Remove(customer);
+        var product = inputValidator.ProductExist(products, userId);
+        if (product == null)
+        {
+            Console.WriteLine("Product not found");
+            return;
+        }
+        products.Remove(product);
+
+        Console.WriteLine("Customer successfully deleted");
     }
 
 
