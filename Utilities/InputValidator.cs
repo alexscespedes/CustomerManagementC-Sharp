@@ -12,13 +12,11 @@ public class InputValidator
 
     public Customer CustomerExist(List<Customer> customers, int id)
     {
-        var customer = customers.FirstOrDefault(s => s.CustomerId == id);
+        return customers.FirstOrDefault(s => s.CustomerId == id)!;
+    }
 
-        if (customer == null)
-        {
-            Console.WriteLine("Customer not found");
-            return null!;
-        }
-        return customer;
+    public Product ProductExist(List<Product> products, int id)
+    {
+        return products.FirstOrDefault(p => p.ProductId == id)!;  
     }
 }
