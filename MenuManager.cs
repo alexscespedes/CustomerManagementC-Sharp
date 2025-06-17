@@ -230,10 +230,10 @@ public class MenuManager
             switch (choice)
             {
                 case "1":
-                    // Add
+                    AddProduct();
                     break;
                 case "2":
-                    // View All
+                    ViewAllProduct();
                     break;
                 case "3":
                 // Find by ID
@@ -252,6 +252,101 @@ public class MenuManager
             }
         }
     }
+
+    void AddProduct()
+    {
+        Console.Write("Enter the product name: ");
+        string name = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(name))
+        {
+            Console.WriteLine("Error: name of product is required");
+            return;
+        }
+
+        Console.Write("Enter the price: ");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal price))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+        }
+
+        Console.Write("Enter product stock quantity: ");
+         if (!int.TryParse(Console.ReadLine(), out int stockQuantity))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+        }
+        
+
+        var newProduct = new Product(name, price, stockQuantity);
+        products.Add(newProduct);
+    }
+
+    void ViewAllProduct()
+    {
+        displayHelper.PrintProduct(products);
+    }
+
+    void FindProductByID()
+    {
+        Console.Write("Enter Customer ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int userId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+        }
+        var customer = inputValidator.CustomerExist(customers, userId);
+        Console.WriteLine($"ID: {customer.CustomerId} | Customer: {customer.Name} | Email {customer.Email} | Type: {customer.CustomerType}");
+    }
+
+    void UpdateProduct()
+    {
+        Console.Write("Enter Customer ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int userId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+        }
+        var customer = inputValidator.CustomerExist(customers, userId);
+
+        Console.Write("Enter the name to update: ");
+        string newName = Console.ReadLine()!;
+
+        if (string.IsNullOrEmpty(newName))
+        {
+            Console.WriteLine("Error: name of customer is required");
+            return;
+        }
+
+        Console.Write("Enter the email to update: ");
+        string newEmail = Console.ReadLine()!;
+
+        if (!inputValidator.IsValidEmail(newEmail))
+        {
+            Console.WriteLine("Error: email of customer is not valid");
+            return;
+        }
+
+        Console.WriteLine("Select customer type to update: ");
+        Console.WriteLine("1. Regular ");
+        Console.WriteLine("2. Premiun");
+        Console.Write("Choose an option: ");
+        
+
+        // customer.Name = newName;
+        // customer.Email = newEmail;
+        // customer.CustomerType = newCustomerType;        
+    }
+
+    void DeleteProduct()
+    {
+        Console.Write("Enter Customer ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int userId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+        }
+        var customer = inputValidator.CustomerExist(customers, userId);
+        customers.Remove(customer);
+    }
+
+
 
     void ManageOrders()
     {
