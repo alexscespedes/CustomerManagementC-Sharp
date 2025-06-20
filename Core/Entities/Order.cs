@@ -16,7 +16,6 @@ public class Order
         Product = product;
         Quantity = quantity;
         OrderDate = DateTime.Now;
-        TotalAmount = Quantity * Product.Price;
     }
 
 }

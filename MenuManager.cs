@@ -2,11 +2,10 @@ namespace CustomerManagement;
 
 public class MenuManager
 {
-    List<Customer> customers = new List<Customer>();
-    List<Product> products = new List<Product>();
-    List<Order> orders = new List<Order>();
     InputValidator inputValidator = new InputValidator();
     DisplayHelper displayHelper = new DisplayHelper();
+
+    OrderService orderService = new OrderService();
     public void MainMenu()
     {
         while (true)
@@ -119,7 +118,7 @@ public class MenuManager
                 customerType = CustomerType.Regular;
                 break;
             case 2:
-                customerType = CustomerType.Regular;
+                customerType = CustomerType.Premiun;
                 break;
             default:
                 Console.WriteLine("Invalid option. Try again");
@@ -127,14 +126,14 @@ public class MenuManager
         }
 
         var newCustomer = new Customer(name, email, customerType);
-        customers.Add(newCustomer);
+        DataContext.Customers.Add(newCustomer);
 
         Console.WriteLine("Customer created successfully");
     }
 
     void ViewAllCustomer()
     {
-        displayHelper.PrintCustomer(customers);
+        displayHelper.PrintCustomer(DataContext.Customers);
     }
 
     void FindCustomerByID()
@@ -145,7 +144,7 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var customer = inputValidator.GetCustomerById(customers, userId);
+        var customer = inputValidator.GetCustomerById(DataContext.Customers, userId);
         if (customer == null)
         {
             Console.WriteLine("Customer not found");
@@ -162,7 +161,7 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var customer = inputValidator.GetCustomerById(customers, userId);
+        var customer = inputValidator.GetCustomerById(DataContext.Customers, userId);
         if (customer == null)
         {
             Console.WriteLine("Customer not found");
@@ -225,13 +224,13 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var customer = inputValidator.GetCustomerById(customers, userId);
+        var customer = inputValidator.GetCustomerById(DataContext.Customers, userId);
         if (customer == null)
         {
             Console.WriteLine("Customer not found");
             return;
         }
-        customers.Remove(customer);
+        DataContext.Customers.Remove(customer);
         Console.WriteLine("Customer successfully deleted");
     }
 
@@ -301,14 +300,14 @@ public class MenuManager
         }
 
         var newProduct = new Product(name, price, stockQuantity);
-        products.Add(newProduct);
+        DataContext.Products.Add(newProduct);
 
         Console.WriteLine("Product created successfully");
     }
 
     void ViewAllProduct()
     {
-        displayHelper.PrintProduct(products);
+        displayHelper.PrintProduct(DataContext.Products);
     }
 
     void FindProductByIdID()
@@ -319,7 +318,7 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var product = inputValidator.GetProductById(products, userId);
+        var product = inputValidator.GetProductById(DataContext.Products, userId);
         if (product == null)
         {
             Console.WriteLine("Product not found");
@@ -336,7 +335,7 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var product = inputValidator.GetProductById(products, userId);
+        var product = inputValidator.GetProductById(DataContext.Products, userId);
         if (product == null)
         {
             Console.WriteLine("Product not found");
@@ -380,13 +379,13 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var product = inputValidator.GetProductById(products, userId);
+        var product = inputValidator.GetProductById(DataContext.Products, userId);
         if (product == null)
         {
             Console.WriteLine("Product not found");
             return;
         }
-        products.Remove(product);
+        DataContext.Products.Remove(product);
 
         Console.WriteLine("Customer successfully deleted");
     }
@@ -445,7 +444,7 @@ public class MenuManager
             return;
 
         }
-        var customer = inputValidator.GetCustomerById(customers, customerId);
+        var customer = inputValidator.GetCustomerById(DataContext.Customers, customerId);
         if (customer == null)
         {
             Console.WriteLine("Customer not found");
@@ -459,7 +458,7 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var product = inputValidator.GetProductById(products, productId);
+        var product = inputValidator.GetProductById(DataContext.Products, productId);
         if (product == null)
         {
             Console.WriteLine("Product not found");
@@ -479,15 +478,12 @@ public class MenuManager
             return;
         }
 
-        var newOrder = new Order(customer, product, quantity);
-        orders.Add(newOrder);
-
-        Console.WriteLine("Order created successfully");
+        orderService.CreateOrder(customer, product, quantity);
     }
 
     void ViewAllOrders()
     {
-        displayHelper.PrintOrder(orders);
+        displayHelper.PrintOrder(DataContext.Orders);
     }
 
     void FindOrderById()
@@ -498,7 +494,7 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var order = inputValidator.GetOrderById(orders, orderId);
+        var order = inputValidator.GetOrderById(DataContext.Orders, orderId);
         if (order == null)
         {
             Console.WriteLine("Order not found");
@@ -516,7 +512,7 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var order = inputValidator.GetOrderById(orders, orderId);
+        var order = inputValidator.GetOrderById(DataContext.Orders, orderId);
         if (order == null)
         {
             Console.WriteLine("Order not found");
@@ -531,7 +527,7 @@ public class MenuManager
             return;
 
         }
-        var newCustomer = inputValidator.GetCustomerById(customers, customerId);
+        var newCustomer = inputValidator.GetCustomerById(DataContext.Customers, customerId);
         if (newCustomer == null)
         {
             Console.WriteLine("Customer not found");
@@ -545,7 +541,7 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var newProduct = inputValidator.GetProductById(products, newProductId);
+        var newProduct = inputValidator.GetProductById(DataContext.Products, newProductId);
         if (newProduct == null)
         {
             Console.WriteLine("Product not found");
@@ -582,13 +578,13 @@ public class MenuManager
             Console.WriteLine("Invalid input! Please enter a valid integer");
             return;
         }
-        var order = inputValidator.GetOrderById(orders, orderId);
+        var order = inputValidator.GetOrderById(DataContext.Orders, orderId);
         if (order == null)
         {
             Console.WriteLine("Order not found");
             return;
         }
-        orders.Remove(order);
+        DataContext.Orders.Remove(order);
         Console.WriteLine("Order successfully deleted");
     }
 
