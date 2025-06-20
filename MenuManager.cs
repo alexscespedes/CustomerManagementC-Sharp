@@ -4,8 +4,9 @@ public class MenuManager
 {
     InputValidator inputValidator = new InputValidator();
     DisplayHelper displayHelper = new DisplayHelper();
-
     OrderService orderService = new OrderService();
+    DataContext dataContext = new DataContext();
+    JsonDataRepository jsonDataRepository = new JsonDataRepository();
     public void MainMenu()
     {
         while (true)
@@ -14,7 +15,9 @@ public class MenuManager
             Console.WriteLine("1. Manage Customers");
             Console.WriteLine("2. Manage Products");
             Console.WriteLine("3. Manage Orders");
-            Console.WriteLine("4. Exit");
+            Console.WriteLine("4. Save Data");
+            Console.WriteLine("5. Load Data");
+            Console.WriteLine("6. Exit");
             Console.Write("Please select an option: ");
 
             string? choice = Console.ReadLine();
@@ -31,6 +34,12 @@ public class MenuManager
                     ManageOrders();
                     break;
                 case "4":
+                    jsonDataRepository.SaveData(dataContext);  
+                    break;
+                case "5":
+                    jsonDataRepository.LoadData(dataContext);
+                    break;
+                case "6":
                     return;
                 default:
                     Console.WriteLine("Invalid option. Try again.");
