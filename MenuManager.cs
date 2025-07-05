@@ -59,7 +59,8 @@ public class MenuManager
             Console.WriteLine("3. Find Customer by ID");
             Console.WriteLine("4. Update Customer");
             Console.WriteLine("5. Delete Customer");
-            Console.WriteLine("6. Exit");
+            Console.WriteLine("6. Search Customer");
+            Console.WriteLine("7. Exit");
             Console.Write("Please select an option: ");
 
             string? choice = Console.ReadLine();
@@ -82,6 +83,9 @@ public class MenuManager
                     DeleteCustomer();
                     break;
                 case "6":
+                    SearchCustomerByName();
+                    break;
+                case "7":
                     return;
                 default:
                     Console.WriteLine("Invalid option. Try again.");
@@ -243,6 +247,20 @@ public class MenuManager
         Console.WriteLine("Customer successfully deleted");
     }
 
+    void SearchCustomerByName()
+    {
+        Console.Write("Enter Customer Name: ");
+        string? name = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            Console.WriteLine("the name cannot be empty");
+            return;
+        }
+
+        var customerPartialSearched = DataContext.Customers.Where(c => c.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
+        displayHelper.PrintCustomer(customerPartialSearched);
+    }
+
     void ManageProducts()
     {
         while (true)
@@ -253,7 +271,8 @@ public class MenuManager
             Console.WriteLine("3. Find Product by ID");
             Console.WriteLine("4. Update Product");
             Console.WriteLine("5. Delete Product");
-            Console.WriteLine("6. Exit");
+            Console.WriteLine("6. Search Product");
+            Console.WriteLine("7. Exit");
             Console.Write("Please select an option: ");
 
             string? choice = Console.ReadLine();
@@ -276,6 +295,9 @@ public class MenuManager
                     DeleteProduct();
                     break;
                 case "6":
+                    SearchProductByName();
+                    break;
+                case "7":
                     return;
                 default:
                     Console.WriteLine("Invalid option. Try again.");
@@ -397,6 +419,20 @@ public class MenuManager
         DataContext.Products.Remove(product);
 
         Console.WriteLine("Customer successfully deleted");
+    }
+
+    void SearchProductByName()
+    {
+        Console.Write("Enter Product Name: ");
+        string? name = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            Console.WriteLine("the name cannot be empty");
+            return;
+        }
+
+        var productPartialSearched = DataContext.Products.Where(c => c.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
+        displayHelper.PrintProduct(productPartialSearched);
     }
 
 
