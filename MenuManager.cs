@@ -11,13 +11,15 @@ public class MenuManager
     {
         while (true)
         {
+            Console.Clear();
             Console.WriteLine("=== Customer Management System ===");
             Console.WriteLine("1. Manage Customers");
             Console.WriteLine("2. Manage Products");
             Console.WriteLine("3. Manage Orders");
             Console.WriteLine("4. Save Data");
             Console.WriteLine("5. Load Data");
-            Console.WriteLine("6. Exit");
+            Console.WriteLine("6. Reports");
+            Console.WriteLine("7. Exit");
             Console.Write("Please select an option: ");
 
             string? choice = Console.ReadLine();
@@ -34,12 +36,15 @@ public class MenuManager
                     ManageOrders();
                     break;
                 case "4":
-                    jsonDataRepository.SaveData(dataContext);  
+                    jsonDataRepository.SaveData(dataContext);
                     break;
                 case "5":
                     jsonDataRepository.LoadData(dataContext);
                     break;
                 case "6":
+                    Reports();
+                    break;
+                case "7":
                     return;
                 default:
                     Console.WriteLine("Invalid option. Try again.");
@@ -632,5 +637,53 @@ public class MenuManager
         DataContext.Orders.Remove(order);
         Console.WriteLine("Order successfully deleted");
     }
+
+    void Reports()
+    {
+        while (true)
+        {
+            Console.WriteLine("=== Reports ===");
+            Console.WriteLine("1. Total Sales Report");
+            Console.WriteLine("2. Customer Order History");
+            Console.WriteLine("3. Low Stock Alert");
+            Console.WriteLine("4. Exit");
+            Console.Write("Please select an option: ");
+
+            string? choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    TotalSalesReport();
+                    break;
+                case "2":
+                    // Customer Order History
+                    break;
+                case "3":
+                    // Low Stock Alert
+                    break;
+                case "4":
+                    return;
+                default:
+                    Console.WriteLine("Invalid option. Try again.");
+                    Console.ReadKey();
+                    break;
+            }
+        }
+    }
+
+    void TotalSalesReport()
+    {
+        decimal totalOrderAmount = DataContext.Orders.Sum(o => o.TotalAmount);
+
+        int totalOrderCount = DataContext.Orders.Count;
+
+        var averageOrderValue = DataContext.Orders.Average(o => o.TotalAmount);
+
+        Console.WriteLine("=== Total Sales Report ===");
+
+        Console.WriteLine($"Sum Order Amounts: {totalOrderAmount} | Count of Total Orders: {totalOrderCount} | Average Order Value: {averageOrderValue} |");
+    }
+
 
 }
