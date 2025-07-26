@@ -2,11 +2,13 @@ namespace CustomerManagement;
 
 public class Product
 {
-    static int nextId;
-    public int ProductId { get; private set; }
+    private static int nextId = 0;
+    public int ProductId { get; set; }
     public string Name { get; set; }
     public decimal Price { get; set; }
     public int StockQuantity { get; set; }
+
+    public Product() { }
 
     public Product(string name, decimal price, int stockQuantity)
     {
@@ -14,5 +16,10 @@ public class Product
         Name = name;
         Price = price;
         StockQuantity = stockQuantity;
+    }
+
+    public static void InitializeNextId(int maxExistingId)
+    {
+        nextId = maxExistingId;
     }
 }

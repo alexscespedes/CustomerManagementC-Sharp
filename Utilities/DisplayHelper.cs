@@ -40,7 +40,7 @@ public class DisplayHelper
 
         foreach (var o in orders)
         {
-            Console.WriteLine($"ID: {o.OrderId} | Customer Name: {o.Customer.Name} | Product Name and Price [{o.Product.Name} - {o.Product.Price}] | Quantity: {o.Quantity} | Date: {o.OrderDate} | Total: {o.TotalAmount}");
+            Console.WriteLine($"ID: {o.OrderId} | Customer ID: {o.CustomerId} | Product ID [{o.ProductId} | Quantity: {o.Quantity} | Date: {o.OrderDate} | Total: {o.TotalAmount}");
         }
     }
 }

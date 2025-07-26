@@ -2,20 +2,26 @@ namespace CustomerManagement;
 
 public class Order
 {
-    static int nextId;
+    private static int nextId = 0;
     public int OrderId { get; set; }
-    public Customer Customer { get; set; }
-    public Product Product { get; set; }
+    public int CustomerId { get; set; }
+    public int ProductId { get; set; }
     public int Quantity { get; set; }
     public DateTime OrderDate { get; set; }
     public decimal TotalAmount { get; set; }
-    public Order(Customer customer, Product product, int quantity)
+    public Order() {}
+    public Order(int customerId, int productId, int quantity)
     {
         OrderId = Interlocked.Increment(ref nextId);
-        Customer = customer;
-        Product = product;
+        CustomerId = customerId;
+        ProductId = productId;
         Quantity = quantity;
         OrderDate = DateTime.Now;
+    }
+
+    public static void InitializeNextId(int maxExistingId)
+    {
+        nextId = maxExistingId;
     }
 
 }
