@@ -119,6 +119,12 @@ public class MenuManager
             Console.WriteLine("Error: email of customer is not valid");
             return;
         }
+        var user = dataContext.Customers.FirstOrDefault(c => c.Email == email);
+        if (user != null)
+        {
+            Console.WriteLine("No two customers can have the same email");
+            return;
+        }
 
         Console.WriteLine("Select customer type: ");
         Console.WriteLine("1. Regular ");
@@ -327,13 +333,27 @@ public class MenuManager
         if (!decimal.TryParse(Console.ReadLine(), out decimal price))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+        }
+        else if (price <= 0)
+        {
+            Console.WriteLine("Product prices must be greater than 0");
+            return;
         }
 
         Console.Write("Enter product stock quantity: ");
         if (!int.TryParse(Console.ReadLine(), out int stockQuantity))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
         }
+        else if (stockQuantity < 0)
+        {
+            Console.WriteLine("Stock can't be negative");
+            return;
+        }
+
+
 
         var newProduct = new Product(name, price, stockQuantity);
         dataContext.Products.Add(newProduct);
