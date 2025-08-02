@@ -599,8 +599,19 @@ public class MenuManager
 
     void CustomerOrderHistory()
     {
-        
+        Console.Write("Enter Customer ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int id))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            return;
+        }
+
+        var customerOrders = dataContext.Orders.Where(o => o.CustomerId == id).ToList();
+        if (customerOrders.Count == 0)
+        {
+            Console.WriteLine($"Customers don't have orders registered.");
+        }
+
+        displayHelper.PrintOrder(customerOrders);
     }
-
-
 }
