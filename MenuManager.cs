@@ -572,7 +572,7 @@ public class MenuManager
                     CustomerOrderHistory();
                     break;
                 case "3":
-                    // Low Stock Alert
+                    LowStockAlert();
                     break;
                 case "4":
                     return;
@@ -613,5 +613,18 @@ public class MenuManager
         }
 
         displayHelper.PrintOrder(customerOrders);
+    }
+
+    void LowStockAlert()
+    {
+        var productsLowStock = dataContext.Products.Where(p => p.StockQuantity < 5).ToList();
+        displayHelper.PrintProduct(productsLowStock);
+
+        decimal TotalAmount = 0;
+        foreach (var product in productsLowStock)
+        {
+            TotalAmount += product.Price * product.StockQuantity;
+        }
+        Console.WriteLine($"--- Total Value of Low Stock Products : {TotalAmount}");
     }
 }
