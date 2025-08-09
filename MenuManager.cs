@@ -254,8 +254,8 @@ public class MenuManager
             Console.WriteLine("Customer not found");
             return;
         }
-        dataContext.Customers.Remove(customer);
-        Console.WriteLine("Customer successfully deleted");
+        Console.WriteLine($"Customer Details: [{customer.CustomerId}] {customer.Name} | {customer.Email} | {customer.CustomerType}");
+        inputValidator.ConfirmCustomerDeletion(dataContext, customer);
     }
 
     void SearchCustomerByName()
@@ -441,9 +441,9 @@ public class MenuManager
             Console.WriteLine("Product not found");
             return;
         }
-        dataContext.Products.Remove(product);
 
-        Console.WriteLine("Customer successfully deleted");
+        Console.WriteLine($"Product Details: [{product.ProductId}] {product.Name} | {product.Price} | {product.StockQuantity}");
+        inputValidator.ConfirmProductDeletion(dataContext, product);
     }
 
     void SearchProductByName()
@@ -566,8 +566,8 @@ public class MenuManager
             Console.WriteLine("Order not found");
             return;
         }
-        dataContext.Orders.Remove(order);
-        Console.WriteLine("Order successfully deleted");
+        Console.WriteLine($"Order Details: [{order.OrderId}] {order.Quantity} | {order.TotalAmount} | {order.OrderDate}");
+        inputValidator.ConfirmOrderDeletion(dataContext, order);
     }
 
     void Reports()
