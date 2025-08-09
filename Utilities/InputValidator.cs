@@ -14,17 +14,23 @@ public class InputValidator
     {
         Console.Write("Are you sure you want to delete it? (y/n): ");
         string? userConfirmation = Console.ReadLine()?.Trim().ToLower();
-                                        
+
         if (userConfirmation == "n" || userConfirmation == "no")
         {
             return;
         }
         else if (userConfirmation == "y" || userConfirmation == "yes")
         {
+            var customerOrders = dataContext.Orders.Where(o => o.CustomerId == customer.CustomerId).ToList();
+            if (customerOrders.Count > 0)
+            {
+                Console.WriteLine("Deletion not allowed: the customer has at least one associated order.");
+                return;
+            }
             dataContext.Customers.Remove(customer);
             Console.WriteLine("Customer successfully deleted");
         }
-        else 
+        else
         {
             Console.WriteLine("Invalid input!");
             return;
@@ -42,6 +48,12 @@ public class InputValidator
         }
         else if (userConfirmation == "y" || userConfirmation == "yes")
         {
+            var productOrders = dataContext.Orders.Where(o => o.ProductId == product.ProductId).ToList();
+            if (productOrders.Count > 0)
+            {
+                Console.WriteLine("Deletion not allowed: the product has at least one associated order.");
+                return;
+            }
             dataContext.Products.Remove(product);
             Console.WriteLine("Product successfully deleted");
         }
