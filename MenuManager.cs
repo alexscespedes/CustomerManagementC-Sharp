@@ -142,7 +142,7 @@ public class MenuManager
                 customerType = CustomerType.Regular;
                 break;
             case 2:
-                customerType = CustomerType.Premiun;
+                customerType = CustomerType.Premium;
                 break;
             default:
                 Console.WriteLine("Invalid option. Try again");

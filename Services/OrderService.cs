@@ -42,7 +42,7 @@ public class OrderService
         updateProduct.StockQuantity = productStockUpdated;
 
         // 3. Customer type discount
-        if (customer.CustomerType == CustomerType.Premiun)
+        if (customer.CustomerType == CustomerType.Premium)
         {
             decimal subTotal = quantity * product.Price;
             decimal discount = subTotal * 0.10m;
