@@ -9,7 +9,7 @@ public class CustomerRepository : ICustomerRepository
 
     public CustomerRepository(DataContext dataContext)
     {
-        _dataContext = dataContext;
+        _dataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
     }
     public void Add(Customer customer)
     {

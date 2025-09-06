@@ -10,8 +10,8 @@ public class CustomerService : ICustomerService
 
     public CustomerService(ICustomerRepository customerRepository, InputValidator inputValidator)
     {
-        _customerRepository = customerRepository;
-        _inputValidator = inputValidator;
+        _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
+        _inputValidator = inputValidator ?? throw new ArgumentNullException(nameof(inputValidator));
     }
 
     public bool CreateCustomer(string name, string email, CustomerType customerType)

@@ -8,7 +8,7 @@ public class ProductRepository : IProductRepository
 
     public ProductRepository(DataContext dataContext)
     {
-        _dataContext = dataContext;
+        _dataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
     }
     public void Add(Product product)
     {
