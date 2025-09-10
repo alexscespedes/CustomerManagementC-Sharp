@@ -12,11 +12,6 @@ public class ProductService : IProductService
         _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
     }
 
-    public IEnumerable<Product> CalculateLowStockValue(int threshold = 5)
-    {
-        return _productRepository.GetLowStockProducts(threshold);
-    }
-
     public bool CreateProduct(string name, decimal price, int stockQuantity)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -46,6 +41,11 @@ public class ProductService : IProductService
     public IEnumerable<Product> GetAllProducts()
     {
         return _productRepository.GetAll();
+    }
+
+    public IEnumerable<Product> GetLowStockProducts(int threshold = 5)
+    {
+        return _productRepository.GetLowStockProducts(threshold);
     }
 
     public Product? GetProductById(int id)
@@ -81,5 +81,11 @@ public class ProductService : IProductService
         existingProduct.StockQuantity = stockQuantity;
         _productRepository.Update(existingProduct);
         return true;
+    }
+
+    public decimal CalculateLowStockValue(int threshold = 5)
+    {
+        var lowStockProducts = _productRepository.GetLowStockProducts(threshold);
+        return lowStockProducts.Sum(p => p.Price * p.StockQuantity);
     }
 }
