@@ -41,8 +41,13 @@ public class OrderRepository : IOrderRepository
         return _dataContext.Orders.Count();
     }
 
-    public bool Remove(Order order)
+    public decimal GetTotalSalesAmount()
     {
-        return _dataContext.Orders.Remove(order);
+        return _dataContext.Orders.Sum(o => o.TotalAmount);
+    }
+
+    public void Remove(Order order)
+    {
+        _dataContext.Orders.Remove(order);
     }
 }

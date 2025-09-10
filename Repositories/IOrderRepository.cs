@@ -8,7 +8,8 @@ public interface IOrderRepository
     Order? GetById(int id);
     IEnumerable<Order> GetAll();
     IEnumerable<Order> GetByCustomerId(int CustomerId);
-    bool Remove(Order order);
+    void Remove(Order order);
+    decimal GetTotalSalesAmount();
     int GetTotalOrderCount();
     decimal GetAverageOrderValue();
 }

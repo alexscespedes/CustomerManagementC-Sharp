@@ -1,60 +1,94 @@
+
+using CustomerManagement.Repositories;
+
 namespace CustomerManagement;
 
-public class OrderService
-{    
-    InputValidator inputValidator = new InputValidator();
+public class OrderService : IOrderService
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly ICustomerRepository _customerRepository;
+    private readonly IProductRepository _productRepository;
+    private const decimal PREMIUN_DISCOUNT_RATE = 0.10m;
 
-    public void CreateOrder(int customerId, int productId, int quantity, DataContext dataContext)
+    public OrderService(
+        IOrderRepository orderRepository,
+        ICustomerRepository customerRepository,
+        IProductRepository productRepository
+    )
     {
-        //Getting objects
-        var customer = inputValidator.GetCustomerById(dataContext.Customers, customerId);
+        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
+        _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
+        _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
+    }
+
+    public bool CreateOrder(int customerId, int productId, int quantity)
+    {
+        var customer = _customerRepository.GetById(customerId);
         if (customer == null)
-        {
-            Console.WriteLine("Customer not found");
-            return;
-        }
+            return false;
 
-        var product = inputValidator.GetProductById(dataContext.Products, productId);
+        var product = _productRepository.GetById(productId);
         if (product == null)
-        {
-            Console.WriteLine("Product not found");
-            return;
-        }
+            return false;
 
-        // Business logic from here.
-        // 1. Stock availability check
-        if (product.StockQuantity == 0 || product.StockQuantity < quantity)
-        {
-            Console.WriteLine("Product out of stock or Not enough {product.Name} in stock");
-            return;
-        }
+        if (quantity <= 0)
+            return false;
 
-        var newOrder = new Order(customerId, productId, quantity);
+        if (product.StockQuantity < quantity)
+            return false;
 
-        // 2. Automatic stock reduction
-        var productStockUpdated = product.StockQuantity -= quantity;
-        var updateProduct = dataContext.Products.FirstOrDefault(p => p.ProductId == product.ProductId);
-        if (updateProduct == null)
-        {
-            Console.Error.Write("Product not found in the list");
-            return;
-        }
-        updateProduct.StockQuantity = productStockUpdated;
+        var order = new Order(customerId, productId, quantity);
 
-        // 3. Customer type discount
+        decimal subtotal = quantity * product.Price;
         if (customer.CustomerType == CustomerType.Premium)
         {
-            decimal subTotal = quantity * product.Price;
-            decimal discount = subTotal * 0.10m;
-            newOrder.TotalAmount = subTotal - discount;
+            decimal discount = subtotal * PREMIUN_DISCOUNT_RATE;
+            order.TotalAmount = subtotal - discount;
         }
         else
         {
-            newOrder.TotalAmount = quantity * product.Price;
+            order.TotalAmount = subtotal;
         }
 
-        // 4. Order total calculation
-        dataContext.Orders.Add(newOrder);
-        Console.WriteLine("Order created successfully");
+        product.StockQuantity -= quantity;
+        _productRepository.Update(product);
+
+        _orderRepository.Add(order);
+        return true;
+
+    }
+
+    public bool DeleteOrder(int id)
+    {
+        var order = _orderRepository.GetById(id);
+        if (order == null)
+            return false;
+
+        _orderRepository.Remove(order);
+        return true;
+    }
+
+    public IEnumerable<Order> GetAllOrders()
+    {
+        return _orderRepository.GetAll();
+    }
+
+    public IEnumerable<Order> GetCustomerOrderHistory(int customerId)
+    {
+        return _orderRepository.GetByCustomerId(customerId);
+    }
+
+    public Order? GetOrderById(int id)
+    {
+        return _orderRepository.GetById(id);
+    }
+
+    public (decimal totalAmount, int orderCount, decimal averageValue) GetSalesReport()
+    {
+        return (
+            _orderRepository.GetTotalSalesAmount(),
+            _orderRepository.GetTotalOrderCount(),
+            _orderRepository.GetAverageOrderValue()
+        );
     }
 }
