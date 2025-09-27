@@ -2,13 +2,13 @@ using System;
 using System.Dynamic;
 using System.Reflection.Metadata.Ecma335;
 
-namespace CustomerManagement.Services;
+namespace CustomerManagement.DependencyInjection;
 
 public class SimpleServiceContainer : IServiceContainer
 {
     private readonly Dictionary<Type, ServiceDescriptor> _services = new();
 
-    public void RegisterSingleton<T>(T instance) where T : class
+    public void RegisterSingletonInstance<T>(T instance) where T : class
     {
         _services[typeof(T)] = new ServiceDescriptor
         {
@@ -73,7 +73,9 @@ public class SimpleServiceContainer : IServiceContainer
         return Activator.CreateInstance(type, parameterInstances)!;
     }
 
-    void IServiceContainer.RegisterSingleton<TInterface, TImplementation>()
+    public void RegisterSingletonType<TInterface, TImplementation>()
+        where TImplementation : class, TInterface  // EXACT same order
+        where TInterface : class
     {
         _services[typeof(TInterface)] = new ServiceDescriptor
         {
@@ -83,7 +85,9 @@ public class SimpleServiceContainer : IServiceContainer
         };
     }
 
-    void IServiceContainer.RegisterTransient<TInterface, TImplementation>()
+    public void RegisterTransientType<TInterface, TImplementation>()
+        where TImplementation : class, TInterface  // EXACT same order
+        where TInterface : class
     {
         _services[typeof(TInterface)] = new ServiceDescriptor
         {

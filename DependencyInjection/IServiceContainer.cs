@@ -1,16 +1,16 @@
 using System;
 
-namespace CustomerManagement.Services;
+namespace CustomerManagement.DependencyInjection;
 
 public interface IServiceContainer
 {
-    void RegisterSingleton<TInterface, TImplementation>()
+    void RegisterSingletonType<TInterface, TImplementation>()
         where TImplementation : class, TInterface
         where TInterface : class;
 
-    void RegisterSingleton<T>(T instance) where T : class;
+    void RegisterSingletonInstance<T>(T instance) where T : class;
 
-    void RegisterTransient<TInterface, TImplementation>()
+    void RegisterTransientType<TInterface, TImplementation>()
         where TImplementation : class, TInterface
         where TInterface : class;
 
