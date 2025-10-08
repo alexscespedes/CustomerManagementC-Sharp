@@ -2,11 +2,29 @@ namespace CustomerManagement;
 
 public class MenuManager
 {
-    InputValidator inputValidator = new InputValidator();
-    DisplayHelper displayHelper = new DisplayHelper();
-    OrderService orderService = new OrderService();
-    DataContext dataContext = new DataContext();
-    JsonDataRepository jsonDataRepository = new JsonDataRepository();
+    private readonly ICustomerService _customerService;
+    private readonly IProductService _productService;
+    private readonly IOrderService _orderService;
+    private readonly DisplayHelper _displayHelper;
+    private readonly JsonDataRepository _jsonDataRepository;
+    private readonly DataContext _dataContext;
+
+    public MenuManager(
+        ICustomerService customerService,
+        IProductService productService,
+        IOrderService orderService,
+        DisplayHelper displayHelper,
+        JsonDataRepository jsonDataRepository,
+        DataContext dataContext)
+    {
+        _customerService = customerService ?? throw new ArgumentNullException(nameof(customerService));
+        _productService = productService ?? throw new ArgumentNullException(nameof(productService));
+        _orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
+        _displayHelper = displayHelper ?? throw new ArgumentNullException(nameof(displayHelper));
+        _jsonDataRepository = jsonDataRepository ?? throw new ArgumentNullException(nameof(jsonDataRepository));
+        _dataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
+    }
+    
     public void MainMenu()
     {
         while (true)
@@ -36,10 +54,10 @@ public class MenuManager
                     ManageOrders();
                     break;
                 case "4":
-                    jsonDataRepository.SaveData(dataContext);
+                    SaveData();
                     break;
                 case "5":
-                    jsonDataRepository.LoadData(dataContext);
+                    LoadData();
                     break;
                 case "6":
                     Reports();
@@ -54,10 +72,39 @@ public class MenuManager
         }
     }
 
+    private void SaveData()
+    {
+        try
+        {
+            _jsonDataRepository.SaveData(_dataContext);
+            Console.WriteLine("Data saved successfully!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving data: {ex.Message}");
+        }
+        Console.ReadKey();
+    }
+
+    private void LoadData()
+    {
+        try
+        {
+            _jsonDataRepository.LoadData(_dataContext);
+            Console.WriteLine("Data loaded successfully!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
+        Console.ReadKey();
+    }
+
     void ManageCustomers()
     {
         while (true)
         {
+            Console.Clear();
             Console.WriteLine("=== Customer Management ===");
             Console.WriteLine("1. Add Customer");
             Console.WriteLine("2. View All Customers");
@@ -100,176 +147,171 @@ public class MenuManager
         }
     }
 
-    void AddCustomer()
+    private void AddCustomer()
     {
         Console.Write("Enter the name: ");
-        string name = Console.ReadLine()!;
-
-        if (string.IsNullOrEmpty(name))
-        {
-            Console.WriteLine("Error: name of customer is required");
-            return;
-        }
+        string name = Console.ReadLine() ?? string.Empty;
 
         Console.Write("Enter the email: ");
-        string email = Console.ReadLine()!;
-
-        if (!inputValidator.IsValidEmail(email))
-        {
-            Console.WriteLine("Error: email of customer is not valid");
-            return;
-        }
-        var user = dataContext.Customers.FirstOrDefault(c => c.Email == email);
-        if (user != null)
-        {
-            Console.WriteLine("No two customers can have the same email");
-            return;
-        }
+        string email = Console.ReadLine() ?? string.Empty;
 
         Console.WriteLine("Select customer type: ");
         Console.WriteLine("1. Regular ");
         Console.WriteLine("2. Premiun");
         Console.Write("Choose an option: ");
-        if (!int.TryParse(Console.ReadLine(), out int userType))
+
+        if (!int.TryParse(Console.ReadLine(), out int userType) || (userType != 1 && userType != 2))
         {
-            Console.WriteLine("Invalid input! Please enter a valid integer");
-        }
-
-        CustomerType customerType;
-        switch (userType)
-        {
-            case 1:
-                customerType = CustomerType.Regular;
-                break;
-            case 2:
-                customerType = CustomerType.Premium;
-                break;
-            default:
-                Console.WriteLine("Invalid option. Try again");
-                return;
-        }
-
-        var newCustomer = new Customer(name, email, customerType);
-        dataContext.Customers.Add(newCustomer);
-
-        Console.WriteLine("Customer created successfully");
-    }
-
-    void ViewAllCustomer()
-    {
-        displayHelper.PrintCustomer(dataContext.Customers);
-    }
-
-    void FindCustomerByID()
-    {
-        Console.Write("Enter Customer ID: ");
-        if (!int.TryParse(Console.ReadLine(), out int userId))
-        {
-            Console.WriteLine("Invalid input! Please enter a valid integer");
+            Console.WriteLine("Invalid input! Please select 1 or 2.");
+            Console.ReadKey();
             return;
         }
-        var customer = inputValidator.GetCustomerById(dataContext.Customers, userId);
+
+        CustomerType customerType = userType == 1 ? CustomerType.Regular : CustomerType.Premium;
+
+        bool success = _customerService.CreateCustomer(name, email, customerType);
+
+        if (success)
+        {
+            Console.WriteLine("Customer created successfully!");
+        }
+        else
+        {
+            Console.WriteLine("Failed to create customer. Please check your input.");
+        }
+
+        Console.ReadKey();
+    }
+
+    private void ViewAllCustomer()
+    {
+        var customers = _customerService.GetAllCustomers();
+        _displayHelper.PrintCustomer(customers);
+        Console.ReadKey();
+    }
+
+    private void FindCustomerByID()
+    {
+        Console.Write("Enter Customer ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int customerId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            Console.ReadKey();
+            return;
+        }
+        var customer = _customerService.GetCustomerById(customerId);
         if (customer == null)
         {
             Console.WriteLine("Customer not found");
-            return;
         }
-        Console.WriteLine($"ID: {customer.CustomerId} | Customer: {customer.Name} | Email {customer.Email} | Type: {customer.CustomerType}");
+        else
+        {
+            Console.WriteLine($"ID: {customer.CustomerId} | Customer: {customer.Name} | Email {customer.Email} | Type: {customer.CustomerType}");
+        }
+        Console.ReadKey();
     }
 
-    void UpdateCustomer()
+    private void UpdateCustomer()
     {
         Console.Write("Enter Customer ID: ");
-        if (!int.TryParse(Console.ReadLine(), out int userId))
+        if (!int.TryParse(Console.ReadLine(), out int customerId))
         {
             Console.WriteLine("Invalid input! Please enter a valid integer");
+            Console.ReadKey();
             return;
         }
-        var customer = inputValidator.GetCustomerById(dataContext.Customers, userId);
-        if (customer == null)
+
+        var existingCustomer = _customerService.GetCustomerById(customerId);
+        if (existingCustomer == null)
         {
             Console.WriteLine("Customer not found");
+            Console.ReadKey();
             return;
         }
 
-        Console.Write("Enter the name to update: ");
-        string newName = Console.ReadLine()!;
+        Console.WriteLine($"Current customer: {existingCustomer.Name} |{existingCustomer.Email} | {existingCustomer.CustomerType}");
 
-        if (string.IsNullOrEmpty(newName))
-        {
-            Console.WriteLine("Error: name of customer is required");
-            return;
-        }
+        Console.Write("Enter new name: ");
+        string newName = Console.ReadLine() ?? string.Empty;
 
-        Console.Write("Enter the email to update: ");
-        string newEmail = Console.ReadLine()!;
-
-        if (!inputValidator.IsValidEmail(newEmail))
-        {
-            Console.WriteLine("Error: email of customer is not valid");
-            return;
-        }
+        Console.Write("Enter new email ");
+        string newEmail = Console.ReadLine() ?? string.Empty;
 
         Console.WriteLine("Select customer type to update: ");
         Console.WriteLine("1. Regular ");
         Console.WriteLine("2. Premiun");
         Console.Write("Choose an option: ");
-        if (!int.TryParse(Console.ReadLine(), out int newUserType))
+
+        if (!int.TryParse(Console.ReadLine(), out int userType) || (userType != 1 && userType != 2))
         {
-            Console.WriteLine("Invalid input! Please enter a valid integer");
-        }
-
-        CustomerType newCustomerType;
-        switch (newUserType)
-        {
-            case 1:
-                newCustomerType = CustomerType.Regular;
-                break;
-            case 2:
-                newCustomerType = CustomerType.Regular;
-                break;
-            default:
-                Console.WriteLine("Invalid option. Try again");
-                return;
-        }
-
-        customer.Name = newName;
-        customer.Email = newEmail;
-        customer.CustomerType = newCustomerType;
-
-        Console.WriteLine("Customer successfully updated");
-    }
-
-    void DeleteCustomer()
-    {
-        Console.Write("Enter Customer ID: ");
-        if (!int.TryParse(Console.ReadLine(), out int userId))
-        {
-            Console.WriteLine("Invalid input! Please enter a valid integer");
+            Console.WriteLine("Invalid input! Please select 1 or 2.");
+            Console.ReadKey();
             return;
         }
-        var customer = inputValidator.GetCustomerById(dataContext.Customers, userId);
+
+        CustomerType newCustomerType = userType == 1 ? CustomerType.Regular : CustomerType.Premium;
+
+        bool success = _customerService.UpdateCustomer(customerId, newName, newEmail, newCustomerType);
+
+        if (success)
+        {
+            Console.WriteLine("Customer updated successfully!");
+        }
+        else
+        {
+            Console.WriteLine("Failed to update customer. Please check your input.");
+        }
+
+        Console.ReadKey();
+    }
+
+    private void DeleteCustomer()
+    {
+        Console.Write("Enter Customer ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int customerId))
+        {
+            Console.WriteLine("Invalid input! Please enter a valid integer");
+            Console.ReadKey();
+            return;
+        }
+        var customer = _customerService.GetCustomerById(customerId);
         if (customer == null)
         {
             Console.WriteLine("Customer not found");
+            Console.ReadKey();
             return;
         }
         Console.WriteLine($"Customer Details: [{customer.CustomerId}] {customer.Name} | {customer.Email} | {customer.CustomerType}");
-        inputValidator.ConfirmCustomerDeletion(dataContext, customer);
+        Console.Write("Are you sure you want to delete this customer? (y/n): ");
+
+        string? confirmation = Console.ReadLine();
+        if (confirmation?.ToLower() == "y" || confirmation?.ToLower() == "yes")
+        {
+            bool success = _customerService.DeleteCustomer(customerId);
+            if (success)
+            {
+                Console.WriteLine("Customer deleted successfully!");
+            }
+            else
+            {
+                Console.WriteLine("Failed to delete customer.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Delete operation cancelled.");
+        }
+        Console.ReadKey();
     }
 
-    void SearchCustomerByName()
+    private void SearchCustomerByName()
     {
         Console.Write("Enter Customer Name: ");
         string? name = Console.ReadLine();
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            Console.WriteLine("the name cannot be empty");
-            return;
-        }
 
-        var customerPartialSearched = dataContext.Customers.Where(c => c.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
-        displayHelper.PrintCustomer(customerPartialSearched);
+        var customers = _customerService.SearchCustomerByName(name ?? string.Empty);
+        _displayHelper.PrintCustomer(customers);
+        Console.ReadKey();
     }
 
     void ManageProducts()
