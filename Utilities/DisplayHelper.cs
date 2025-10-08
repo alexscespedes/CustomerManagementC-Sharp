@@ -2,9 +2,9 @@ namespace CustomerManagement;
 
 public class DisplayHelper
 {
-    public void PrintCustomer(List<Customer> customers)
+    public void PrintCustomer(IEnumerable<Customer> customers)
     {
-        if (customers.Count == 0)
+        if (customers.ToList().Count == 0)
         {
             Console.WriteLine("Customer not found");
             return;
@@ -16,9 +16,9 @@ public class DisplayHelper
         }
     }
 
-    public void PrintProduct(List<Product> products)
+    public void PrintProduct(IEnumerable<Product> products)
     {
-        if (products.Count == 0)
+        if (products.ToList().Count == 0)
         {
             Console.WriteLine("Product not found");
             return;
@@ -30,9 +30,9 @@ public class DisplayHelper
         }
     }
 
-    public void PrintOrder(List<Order> orders)
+    public void PrintOrder(IEnumerable<Order> orders)
     {
-        if (orders.Count == 0)
+        if (orders.ToList().Count == 0)
         {
             Console.WriteLine("Product not found");
             return;
