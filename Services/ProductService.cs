@@ -53,7 +53,7 @@ public class ProductService : IProductService
         return _productRepository.GetById(id);
     }
 
-    public IEnumerable<Product> SearchProductByName(string name)
+    public IEnumerable<Product> SearchProductsByName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return Enumerable.Empty<Product>();

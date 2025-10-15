@@ -63,7 +63,7 @@ public class CustomerService : ICustomerService
         return !_customerRepository.EmailExists(email);
     }
 
-    public IEnumerable<Customer> SearchCustomerByName(string name)
+    public IEnumerable<Customer> SearchCustomersByName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
