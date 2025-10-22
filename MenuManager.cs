@@ -731,7 +731,7 @@ public class MenuManager
         }
 
         var customerOrders = _orderService.GetCustomerOrderHistory(customerId);
-        if (customerOrders.Any())
+        if (!customerOrders.Any())
         {
             Console.WriteLine($"No orders found for this customer.");
         }

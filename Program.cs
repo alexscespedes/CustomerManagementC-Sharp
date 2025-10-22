@@ -1,13 +1,25 @@
-﻿namespace CustomerManagement;
+﻿using CustomerManagement.Configuration;
+
+namespace CustomerManagement;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Welcome, Alexander!");
-        MenuManager menuManager = new MenuManager();
-        
-        menuManager.MainMenu();
+        try
+        {
+            var serviceContainer = ServiceConfiguration.ConfigureServices();
 
+            var MenuManager = serviceContainer.Resolve<MenuManager>();
+            MenuManager.MainMenu();
+
+            Console.WriteLine("Thank you for using Customer Management System!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Application error: {ex.Message}");
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
+        }
     }
 }
