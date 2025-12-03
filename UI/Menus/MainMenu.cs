@@ -52,22 +52,22 @@ public class MainMenu : BaseMenu
             switch (choice)
             {
                 case "1":
-                    // _customerMenu.Display();
+                    _customerMenu.Display();
                     break;
                 case "2":
-
+                    _productMenu.Display();
                     break;
                 case "3":
-
+                    _orderMenu.Display();
                     break;
                 case "4":
- 
+                    ExecuteAction(() => SaveData());
                     break;
                 case "5":
-
+                    ExecuteAction(() => LoadData());
                     break;
                 case "6":
-
+                    _reportMenu.Display();
                     break;
                 case "7":
                     return;
